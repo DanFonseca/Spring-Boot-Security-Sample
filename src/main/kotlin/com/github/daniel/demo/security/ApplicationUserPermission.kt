@@ -7,6 +7,6 @@ package com.github.daniel.demo.security
     STUDENT_READ ("student:read"),
     STUDENT_WRITE ("student:write"),
     COURSE_READ ("course:read"),
-    COURSE_WRITE ("course:write")
+    COURSE_WRITE ("course:write");
 
 }

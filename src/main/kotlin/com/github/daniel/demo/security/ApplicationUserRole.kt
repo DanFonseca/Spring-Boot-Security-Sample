@@ -13,7 +13,7 @@ enum class ApplicationUserRole (
 
      fun getAuthorities () : Set<SimpleGrantedAuthority> {
         val authorities = permissions.stream()
-                .map { x -> SimpleGrantedAuthority(x.name) }
+                .map { x -> SimpleGrantedAuthority(x.permission) }
                 .collect(Collectors.toSet())
         authorities.add(SimpleGrantedAuthority("ROLE_$this"))
 
