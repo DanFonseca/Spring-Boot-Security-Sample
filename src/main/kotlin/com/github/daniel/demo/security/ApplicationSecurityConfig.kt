@@ -26,7 +26,7 @@ class ApplicationSecurityConfig (
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/index", "/css/*", "/js/*").permitAll()
+                .antMatchers("/login", "/", "/index", "/css/*", "/js/*").permitAll()
                 .antMatchers("/api/**").hasAnyRole(STUDENT.name)
 //                .antMatchers(HttpMethod.DELETE,"/management/api/**").hasAuthority(COURSE_WRITE.permission)
 //                .antMatchers(HttpMethod.POST,"/management/api/**").hasAuthority(COURSE_WRITE.permission)
@@ -35,7 +35,8 @@ class ApplicationSecurityConfig (
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic()
+                .formLogin()
+                .loginPage("/login")
     }
 
     @Bean
