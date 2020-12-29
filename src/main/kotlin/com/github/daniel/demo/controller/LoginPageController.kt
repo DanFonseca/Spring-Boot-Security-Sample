@@ -10,4 +10,7 @@ class LoginPageController {
 
     @GetMapping("login")
     fun loginPage() : String = "login"
+
+    @GetMapping("courses")
+    fun successPage() : String = "courses"
 }
