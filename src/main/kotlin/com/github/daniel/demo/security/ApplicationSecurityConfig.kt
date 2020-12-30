@@ -1,8 +1,11 @@
 package com.github.daniel.demo.security
 
+import com.github.daniel.demo.auth.ApplicationUserService
 import com.github.daniel.demo.security.ApplicationUserRole.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -19,7 +22,8 @@ import java.util.concurrent.TimeUnit
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class ApplicationSecurityConfig (
-        val passwordEncoder: PasswordEncoder
+        val passwordEncoder: PasswordEncoder,
+        val applicationUserService: ApplicationUserService
 ) : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http
@@ -54,33 +58,45 @@ class ApplicationSecurityConfig (
                     .logoutSuccessUrl("/login")
     }
 
-    @Bean
-    override fun userDetailsService(): UserDetailsService {
-
-        val  daniel : UserDetails = User.builder()
-                .username("danfreitas")
-                .password(passwordEncoder.encode("123"))
-               // .roles(STUDENT.name)
-                .authorities(STUDENT.getAuthorities())
-                .build()
-
-        val lindaUser = User.builder()
-                .username("Linda")
-                .password(passwordEncoder.encode("123"))
-               // .roles(ADMIN.name)
-                .authorities(ADMIN.getAuthorities())
-                .build()
-
-        val tom = User.builder().
-                username("tom")
-                .password(passwordEncoder.encode("123"))
-               // .roles(ADMINTRAINEE.name)
-                .authorities(ADMIN_TRAINEE.getAuthorities())
-                .build()
-
-        return InMemoryUserDetailsManager(
-                daniel,
-                lindaUser,
-                 tom)
+    override fun configure(auth: AuthenticationManagerBuilder?) {
+            auth?.authenticationProvider(authenticationProvider())
     }
+
+    @Bean
+    fun authenticationProvider () : DaoAuthenticationProvider {
+        val provider = DaoAuthenticationProvider()
+        provider.setPasswordEncoder(passwordEncoder)
+        provider.setUserDetailsService(applicationUserService)
+        return provider
+    }
+
+//    @Bean
+//    override fun userDetailsService(): UserDetailsService {
+//
+//        val  daniel : UserDetails = User.builder()
+//                .username("danfreitas")
+//                .password(passwordEncoder.encode("123"))
+//               // .roles(STUDENT.name)
+//                .authorities(STUDENT.getAuthorities())
+//                .build()
+//
+//        val lindaUser = User.builder()
+//                .username("Linda")
+//                .password(passwordEncoder.encode("123"))
+//               // .roles(ADMIN.name)
+//                .authorities(ADMIN.getAuthorities())
+//                .build()
+//
+//        val tom = User.builder().
+//                username("tom")
+//                .password(passwordEncoder.encode("123"))
+//               // .roles(ADMINTRAINEE.name)
+//                .authorities(ADMIN_TRAINEE.getAuthorities())
+//                .build()
+//
+//        return InMemoryUserDetailsManager(
+//                daniel,
+//                lindaUser,
+//                 tom)
+//    }
 }
